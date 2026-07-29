@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dheeraj Kumar Jayaswal — Web & API Penetration Tester</title>
+<meta name="description" content="Dheeraj Kumar Jayaswal — CEH certified penetration tester specializing in web application & API security across Banking, Ecommerce, Retail, Income Tax, Education and Freight Logistics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B0D10;
+    --surface: #14171C;
+    --surface-2: #1B1F26;
+    --line: #262B33;
+    --text: #F4F2EC;
+    --text-soft: #D8D5CD;
+    --muted: #ACB2BC;
+    --muted-dim: #7C828C;
+    --gold: #EFB25E;
+    --gold-dim: #6B5730;
+    --ok: #5CC08E;
+    --bad: #F0666B;
+    --crit: #F0666B;
+    --high: #EFB25E;
+    --med: #7FB6E8;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *{margin:0; padding:0; box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text-soft);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.65;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+  a{color:inherit;}
+  ::selection{background:var(--gold-dim); color:var(--text);}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){.wrap{padding:0 20px;}}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(11,13,16,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; height:64px;}
+  .brand{font-family:var(--font-mono); font-weight:700; font-size:15px; letter-spacing:0.02em; color:var(--text);}
+  .brand span{color:var(--gold);}
+  .nav-links{display:flex; gap:28px; list-style:none; font-size:13px; font-family:var(--font-mono);}
+  .nav-links a{color:var(--muted); text-decoration:none; transition:color .2s;}
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--gold);}
+  .nav-links{display:none;}
+  @media (min-width:768px){.nav-links{display:flex;}}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:150px 0 90px; position:relative;}
+  .hero .wrap{display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:center;}
+  @media (max-width:900px){.hero .wrap{grid-template-columns:1fr;} .hero{padding:120px 0 60px;}}
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; color:var(--gold);
+    letter-spacing:0.14em; text-transform:uppercase; margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px var(--ok); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.4;}}
+
+  h1{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(34px, 5vw, 54px); line-height:1.12; letter-spacing:-0.01em;
+    margin-bottom:20px; color:var(--text);
+  }
+  h1 .accent{color:var(--gold);}
+  .lede{font-size:17.5px; color:var(--text-soft); max-width:52ch; margin-bottom:30px;}
+  .lede strong{color:var(--text); font-weight:600;}
+
+  .cta-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:36px;}
+  .btn{
+    font-family:var(--font-mono); font-size:13px; font-weight:500;
+    padding:13px 22px; border-radius:6px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px; transition:all .2s;
+    border:1px solid transparent;
+  }
+  .btn-primary{background:var(--gold); color:#14110A;}
+  .btn-primary:hover{background:#f3bd6e; transform:translateY(-1px);}
+  .btn-ghost{border-color:var(--line); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--gold-dim); background:var(--surface);}
+
+  .stat-strip{display:flex; gap:0; border-top:1px solid var(--line); padding-top:22px; flex-wrap:wrap;}
+  .stat{padding-right:28px; margin-right:28px; border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat b{font-family:var(--font-mono); font-size:22px; color:var(--text); display:block;}
+  .stat span{font-size:11.5px; color:var(--muted-dim); font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em;}
+
+  /* ---------- Signature: Repeater panel ---------- */
+  .repeater{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .repeater-bar{
+    display:flex; align-items:center; gap:8px; padding:11px 16px;
+    background:var(--surface-2); border-bottom:1px solid var(--line);
+    font-family:var(--font-mono); font-size:11.5px; color:var(--muted-dim);
+  }
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .repeater-bar .tab{margin-left:8px; color:var(--muted);}
+  .repeater-body{display:grid; grid-template-columns:1fr 1fr;}
+  @media (max-width:560px){.repeater-body{grid-template-columns:1fr;}}
+  .rpane{padding:16px; font-family:var(--font-mono); font-size:12.5px; line-height:1.75;}
+  .rpane + .rpane{border-left:1px solid var(--line);}
+  @media (max-width:560px){.rpane + .rpane{border-left:none; border-top:1px solid var(--line);}}
+  .rpane h4{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted-dim); margin-bottom:10px; font-family:var(--font-mono);}
+  .req-line{white-space:pre; color:var(--muted);}
+  .hl-del{background:rgba(229,72,77,0.18); color:var(--bad); text-decoration:line-through; padding:1px 2px; border-radius:2px;}
+  .hl-add{background:rgba(76,175,125,0.18); color:var(--ok); padding:1px 2px; border-radius:2px;}
+  .status-line{margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);}
+  .status-403{color:var(--bad);}
+  .status-200{color:var(--ok);}
+  .blink{display:inline-block; width:7px; background:var(--gold); animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .repeater-foot{padding:10px 16px; font-family:var(--font-mono); font-size:11px; color:var(--muted-dim); border-top:1px solid var(--line); background:var(--surface-2);}
+
+  section{padding:88px 0; border-top:1px solid var(--line);}
+  .section-head{max-width:640px; margin-bottom:48px;}
+  .section-eyebrow{font-family:var(--font-mono); font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.12em; margin-bottom:12px;}
+  .section-title{font-family:var(--font-display); font-size:clamp(24px,3.4vw,34px); font-weight:600; margin-bottom:14px; color:var(--text);}
+  .section-sub{color:var(--muted); font-size:15.5px; max-width:60ch;}
+
+  /* ---------- Domains ---------- */
+  .domain-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  @media (max-width:860px){.domain-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.domain-grid{grid-template-columns:1fr;}}
+  .domain-card{background:var(--surface); padding:26px 24px; transition:background .2s;}
+  .domain-card:hover{background:var(--surface-2);}
+  .domain-tag{font-family:var(--font-mono); font-size:10.5px; color:var(--gold); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;}
+  .domain-card h3{font-family:var(--font-display); font-size:18px; margin-bottom:10px; color:var(--text);}
+  .domain-card .asset{font-size:13.5px; color:var(--muted); margin-bottom:12px;}
+  .domain-card .asset b{color:var(--text); font-weight:600;}
+  .domain-card .vec{font-family:var(--font-mono); font-size:11.5px; color:var(--muted-dim); border-top:1px solid var(--line); padding-top:10px;}
+  .domain-card .vec b{color:var(--high);}
+
+  /* ---------- Case studies ---------- */
+  .case{border:1px solid var(--line); border-radius:10px; margin-bottom:14px; background:var(--surface); overflow:hidden;}
+  .case-head{display:flex; align-items:center; gap:14px; padding:20px 22px; cursor:pointer; user-select:none;}
+  .case-head:hover{background:var(--surface-2);}
+  .sev{font-family:var(--font-mono); font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:4px 9px; border-radius:4px; flex-shrink:0;}
+  .sev-crit{background:rgba(229,72,77,.15); color:var(--crit); border:1px solid rgba(229,72,77,.35);}
+  .sev-high{background:rgba(232,169,76,.15); color:var(--high); border:1px solid rgba(232,169,76,.35);}
+  .sev-med{background:rgba(127,182,232,.15); color:var(--med); border:1px solid rgba(127,182,232,.35);}
+  .case-title{font-family:var(--font-display); font-size:16.5px; font-weight:600; flex:1; color:var(--text);}
+  .case-industry{font-family:var(--font-mono); font-size:11px; color:var(--muted-dim); flex-shrink:0;}
+  .case-chevron{font-family:var(--font-mono); color:var(--muted-dim); transition:transform .25s; flex-shrink:0;}
+  .case.open .case-chevron{transform:rotate(90deg); color:var(--gold);}
+  .case-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .case.open .case-body{max-height:420px;}
+  .case-body-inner{padding:0 22px 22px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; font-size:13.5px;}
+  @media (max-width:700px){.case-body-inner{grid-template-columns:1fr;}}
+  .case-body-inner h5{font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--gold); letter-spacing:.08em; margin-bottom:6px;}
+  .case-body-inner p{color:var(--muted);}
+
+  /* ---------- Skills ---------- */
+  .skills-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  @media (max-width:760px){.skills-grid{grid-template-columns:1fr;}}
+  .skills-col{background:var(--surface); padding:30px 28px;}
+  .skills-col h3{font-family:var(--font-display); font-size:17px; margin-bottom:4px; color:var(--text);}
+  .skills-col .skills-sub{font-size:12.5px; color:var(--muted-dim); font-family:var(--font-mono); margin-bottom:20px;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{font-family:var(--font-mono); font-size:12px; color:var(--text); border:1px solid var(--line); padding:6px 11px; border-radius:5px; background:var(--surface-2);}
+  .skills-col.offense .chip{border-color:var(--gold-dim);}
+
+  /* ---------- Timeline ---------- */
+  .timeline{position:relative; padding-left:28px;}
+  .timeline::before{content:''; position:absolute; left:5px; top:6px; bottom:6px; width:1px; background:var(--line);}
+  .tl-item{position:relative; padding-bottom:34px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:''; position:absolute; left:-28px; top:5px; width:11px; height:11px; border-radius:50%; background:var(--bg); border:2px solid var(--gold);}
+  .tl-year{font-family:var(--font-mono); font-size:11.5px; color:var(--gold); margin-bottom:4px;}
+  .tl-role{font-family:var(--font-display); font-size:17px; font-weight:600; margin-bottom:4px; color:var(--text);}
+  .tl-desc{font-size:13.5px; color:var(--muted); max-width:60ch;}
+
+  /* ---------- Contact ---------- */
+  .contact-box{
+    border:1px solid var(--line); border-radius:12px; padding:52px 40px; text-align:center;
+    background:linear-gradient(180deg, var(--surface), var(--bg));
+  }
+  .contact-box h2{font-family:var(--font-display); font-size:clamp(24px,4vw,36px); margin-bottom:14px; color:var(--text);}
+  .contact-box p{color:var(--muted); max-width:52ch; margin:0 auto 30px;}
+  .contact-links{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+
+  footer{padding:32px 0; border-top:1px solid var(--line); text-align:center;}
+  footer p{font-family:var(--font-mono); font-size:11.5px; color:var(--muted-dim);}
+
+  .fade-in{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .fade-in.visible{opacity:1; transform:translateY(0);}
+
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  /* ---------- Boot sequence ---------- */
+  #boot{
+    position:fixed; inset:0; z-index:9999; background:#000;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); color:var(--ok);
+    transition:opacity .5s ease, visibility .5s ease;
+  }
+  #boot.done{opacity:0; visibility:hidden; pointer-events:none;}
+  #boot-inner{width:min(560px, 86vw); font-size:13px; line-height:1.9;}
+  #boot-inner .line{opacity:0; white-space:pre-wrap;}
+  #boot-inner .line.show{opacity:1;}
+  #boot-inner .ok{color:var(--ok);}
+  #boot-inner .warn{color:var(--gold);}
+  #boot-cursor{display:inline-block; width:8px; background:var(--ok); animation:blink 0.9s step-end infinite;}
+  @media (prefers-reduced-motion: reduce){ #boot{display:none;} }
+
+  /* ---------- Matrix rain canvas ---------- */
+  #matrix{position:absolute; inset:0; width:100%; height:100%; opacity:0.16; pointer-events:none;}
+  .hero{overflow:hidden;}
+
+  /* ---------- Cursor spotlight ---------- */
+  .spotlight{
+    position:absolute; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(600px circle at var(--mx,50%) var(--my,20%), rgba(232,169,76,0.10), transparent 60%);
+  }
+  .hero .wrap{position:relative; z-index:2;}
+
+  /* ---------- Glitch ---------- */
+  .glitch-wrap{position:relative; display:inline-block;}
+  .glitch-wrap.glitching::before, .glitch-wrap.glitching::after{
+    content:attr(data-text); position:absolute; left:0; top:0; width:100%; overflow:hidden;
+  }
+  .glitch-wrap.glitching::before{color:var(--bad); clip-path:inset(0 0 60% 0); transform:translate(-2px,-1px); mix-blend-mode:screen;}
+  .glitch-wrap.glitching::after{color:var(--ok); clip-path:inset(60% 0 0 0); transform:translate(2px,1px); mix-blend-mode:screen;}
+
+  .brand-glitch:hover{animation:brandglitch .3s steps(2) 2;}
+  @keyframes brandglitch{
+    0%{transform:translate(0);}
+    25%{transform:translate(-1px,1px); text-shadow:-1px 0 var(--bad), 1px 0 var(--ok);}
+    50%{transform:translate(1px,-1px); text-shadow:1px 0 var(--bad), -1px 0 var(--ok);}
+    75%{transform:translate(-1px,0);}
+    100%{transform:translate(0); text-shadow:none;}
+  }
+
+  .cursor-caret{display:inline-block; width:3px; height:1em; background:var(--gold); vertical-align:-0.15em; margin-left:2px; animation:blink 0.9s step-end infinite;}
+
+  /* count-up number ready state handled via JS textContent updates */
+
+  .domain-card, .case, .skills-col, .repeater, .stat{position:relative;}
+  .domain-card::after{
+    content:''; position:absolute; inset:0; border:1px solid transparent; border-radius:inherit;
+    transition:border-color .25s, box-shadow .25s; pointer-events:none;
+  }
+  .domain-card:hover::after{border-color:var(--gold-dim); box-shadow:0 0 24px -6px rgba(232,169,76,0.35) inset;}
+
+  .repeater{transition:box-shadow .3s;}
+  .repeater:hover{box-shadow:0 30px 70px -18px rgba(232,169,76,0.18), 0 30px 60px -20px rgba(0,0,0,0.6);}
+</style>
+</head>
+<body>
+
+<div id="boot" aria-hidden="true">
+  <div id="boot-inner">
+    <div class="line" data-text="root@0xdheeraj:~$ initiating secure session..."></div>
+    <div class="line" data-text="[<span class='ok'>OK</span>] TLS handshake established"></div>
+    <div class="line" data-text="[<span class='ok'>OK</span>] Loading identity: Dheeraj Kumar Jayaswal"></div>
+    <div class="line" data-text="[<span class='warn'>SCAN</span>] Probing target for weak auth..."></div>
+    <div class="line" data-text="[<span class='ok'>FOUND</span>] 6 industry domains indexed"></div>
+    <div class="line" data-text="root@0xdheeraj:~$ access granted<span id='boot-cursor'>&nbsp;</span>"></div>
+  </div>
+</div>
+
+<nav>
+  <div class="wrap">
+    <div class="brand brand-glitch">0x<span>Dheeraj</span></div>
+    <ul class="nav-links">
+      <li><a href="#domains">Domains</a></li>
+      <li><a href="#cases">Engagements</a></li>
+      <li><a href="#skills">Skill Stack</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="matrix"></canvas>
+  <div class="spotlight" id="spotlight"></div>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Available for pentest engagements</div>
+      <h1>I find the request your API<br>forgot to <span class="glitch-wrap accent" id="glitchWord" data-text="authenticate.">authenticate.</span></h1>
+      <p class="lede">
+        <strong>Dheeraj Kumar Jayaswal</strong> — CEH-certified penetration tester with 15 years in IT and
+        5.6 years focused on offensive security. I test web applications and APIs the way an attacker
+        would, and read the code the way a developer would — because I used to be one full-time.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#cases">See engagement reports →</a>
+        <a class="btn btn-ghost" href="https://www.linkedin.com/in/dheerajkumarjayaswal/" target="_blank" rel="noopener">Connect on LinkedIn</a>
+      </div>
+      <div class="stat-strip">
+        <div class="stat"><b class="count" data-target="15" data-suffix="">0</b><span>Years in IT</span></div>
+        <div class="stat"><b class="count" data-target="5.6" data-suffix="" data-decimal="1">0</b><span>Years in AppSec</span></div>
+        <div class="stat"><b>CEH</b><span>Certified</span></div>
+        <div class="stat"><b class="count" data-target="6" data-suffix="">0</b><span>Industry domains</span></div>
+      </div>
+    </div>
+
+    <div class="repeater fade-in" id="repeater">
+      <div class="repeater-bar">
+        <span class="dot" style="background:var(--bad)"></span>
+        <span class="dot" style="background:var(--gold)"></span>
+        <span class="dot" style="background:var(--ok)"></span>
+        <span class="tab">Repeater — PUT /api/v1/accounts/{id}/role</span>
+      </div>
+      <div class="repeater-body">
+        <div class="rpane">
+          <h4>Request</h4>
+<div class="req-line">PUT /api/v1/accounts/8841/role HTTP/1.1
+Host: app.internal-bank.io
+Authorization: Bearer eyJhbGciOi...
+Content-Type: application/json
+
+{
+  "userId": 8841,
+  "role": <span class="hl-del">"user"</span><span class="hl-add">"admin"</span>
+}</div>
+        </div>
+        <div class="rpane">
+          <h4>Response</h4>
+          <div class="req-line status-line">
+            <span class="status-403" id="statusLine">HTTP/1.1 403 Forbidden</span><span class="blink" id="cursorBlink">&nbsp;</span>
+          </div>
+          <div class="req-line" id="respBody" style="margin-top:8px; min-height:20px;"></div>
+        </div>
+      </div>
+      <div class="repeater-foot" id="repeaterFoot">Sending role in request body instead of trusting server-side session → broken object-level authorization.</div>
+    </div>
+  </div>
+</header>
+
+<section id="domains">
+  <div class="wrap">
+    <div class="section-head fade-in">
+      <div class="section-eyebrow">Domain expertise</div>
+      <h2 class="section-title">Six industries. Six different ways to lose money.</h2>
+      <p class="section-sub">Generic pentesting checks for missing headers. Domain-aware pentesting checks whether the business logic can be abused — because every industry hides its crown jewels somewhere different.</p>
+    </div>
+    <div class="domain-grid fade-in">
+      <div class="domain-card">
+        <div class="domain-tag">Banking</div>
+        <h3>Core & digital banking</h3>
+        <p class="asset">Protects <b>account balances, fund transfers, KYC data</b></p>
+        <p class="vec">Watch class: <b>Broken authZ on transaction & role endpoints</b></p>
+      </div>
+      <div class="domain-card">
+        <div class="domain-tag">Income Tax</div>
+        <h3>Government filing portals</h3>
+        <p class="asset">Protects <b>PAN/taxpayer records, filing history, refunds</b></p>
+        <p class="vec">Watch class: <b>IDOR on document & assessment IDs</b></p>
+      </div>
+      <div class="domain-card">
+        <div class="domain-tag">Ecommerce</div>
+        <h3>Checkout & catalog platforms</h3>
+        <p class="asset">Protects <b>pricing logic, cart totals, coupon engines</b></p>
+        <p class="vec">Watch class: <b>Client-trusted price/quantity params</b></p>
+      </div>
+      <div class="domain-card">
+        <div class="domain-tag">Retail</div>
+        <h3>POS & inventory systems</h3>
+        <p class="asset">Protects <b>store-level inventory, loyalty balances</b></p>
+        <p class="vec">Watch class: <b>Cross-tenant data leakage between stores</b></p>
+      </div>
+      <div class="domain-card">
+        <div class="domain-tag">Education</div>
+        <h3>LMS & exam platforms</h3>
+        <p class="asset">Protects <b>exam integrity, grades, student records</b></p>
+        <p class="vec">Watch class: <b>Session/timer manipulation, answer key exposure</b></p>
+      </div>
+      <div class="domain-card">
+        <div class="domain-tag">Freight Logistics</div>
+        <h3>Shipment tracking & carrier APIs</h3>
+        <p class="asset">Protects <b>shipment manifests, consignee PII, routes</b></p>
+        <p class="vec">Watch class: <b>Sequential tracking-ID enumeration</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cases">
+  <div class="wrap">
+    <div class="section-head fade-in">
+      <div class="section-eyebrow">Engagement reports</div>
+      <h2 class="section-title">Selected findings, anonymized</h2>
+      <p class="section-sub">Spanning banking, ecommerce, government tax filing, freight & port logistics, automotive, recruitment tech, AI platforms, engineering software, education, and media streaming. Client names and identifying details are withheld under NDA — findings are described by pattern, not by target. Severity ratings follow CVSS-informed internal triage. Click a row to expand.</p>
+    </div>
+
+    <div id="case-list">
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-crit">Critical</span>
+          <span class="case-title">Account takeover via broken role assignment</span>
+          <span class="case-industry">Banking</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>A role-update endpoint trusted the role field submitted by the client instead of validating it server-side, allowing any authenticated user to self-elevate to an administrative role.</p></div>
+          <div><h5>Impact</h5><p>Full access to other customers' accounts, transaction history, and fund-transfer functions — the core of the platform's trust model.</p></div>
+          <div><h5>Resolution</h5><p>Server-side role enforcement added; fix verified and closed within 48 hours of disclosure.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-high">High</span>
+          <span class="case-title">Price manipulation at checkout via tampered cart payload</span>
+          <span class="case-industry">Ecommerce</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>The checkout API recalculated totals using unit prices sent by the client rather than re-pricing against the product catalog, so a modified request could check out at an arbitrary price.</p></div>
+          <div><h5>Impact</h5><p>Direct revenue loss at scale if automated — no purchase limit or server-side re-validation caught it.</p></div>
+          <div><h5>Resolution</h5><p>Server-side price recalculation enforced on every order; regression test added to the release pipeline.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-crit">Critical</span>
+          <span class="case-title">Taxpayer document exposure via sequential document IDs</span>
+          <span class="case-industry">Income Tax</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>Filed-document downloads were referenced by a predictable numeric ID with no ownership check, so incrementing the ID returned other taxpayers' filings.</p></div>
+          <div><h5>Impact</h5><p>Mass-enumerable exposure of PAN-linked financial documents across the taxpayer base.</p></div>
+          <div><h5>Resolution</h5><p>IDs replaced with non-sequential references bound to an ownership check; retested and confirmed remediated.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-high">High</span>
+          <span class="case-title">Shipment manifest enumeration exposing consignee PII</span>
+          <span class="case-industry">Freight Logistics</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>The tracking API accepted sequential shipment IDs and returned full manifests, including consignee name, phone number, and delivery address, without verifying the requester's relationship to that shipment.</p></div>
+          <div><h5>Impact</h5><p>Bulk scraping of customer PII across the carrier's entire shipment volume was possible with a simple loop.</p></div>
+          <div><h5>Resolution</h5><p>Rate limiting plus per-shipment authorization added; tracking tokens moved to non-guessable identifiers.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-high">High</span>
+          <span class="case-title">Exam timer bypass allowing extended answer submission</span>
+          <span class="case-industry">Education</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>Exam duration was enforced client-side in JavaScript; intercepting and replaying the submission request after the visible timer expired still recorded a valid, on-time answer.</p></div>
+          <div><h5>Impact</h5><p>Undermined exam integrity for a platform used in certification-grade assessments.</p></div>
+          <div><h5>Resolution</h5><p>Server-side exam-window validation added, rejecting any submission after the authoritative deadline.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-crit">Critical</span>
+          <span class="case-title">Connected-vehicle telematics API leaking live location via hardcoded keys</span>
+          <span class="case-industry">Automotive OEM</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>A telematics service shipped with a hardcoded API key inside client-side code, granting access to a backend endpoint that returned live vehicle location and trip history for other VINs.</p></div>
+          <div><h5>Impact</h5><p>Potential real-time tracking of any vehicle in the fleet, a serious physical-safety and privacy concern beyond typical data exposure.</p></div>
+          <div><h5>Resolution</h5><p>Key rotated out of client code, moved behind a server-side proxy with per-vehicle authorization; retested and closed.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-high">High</span>
+          <span class="case-title">Candidate PII exposure via IDOR on resume export endpoint</span>
+          <span class="case-industry">Recruitment Platform</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>A resume/profile export endpoint accepted a candidate ID with no ownership check, letting any logged-in recruiter account pull full resumes and contact details for candidates outside their own applicant pool.</p></div>
+          <div><h5>Impact</h5><p>Mass export of job-seeker PII was possible across the platform's entire candidate database.</p></div>
+          <div><h5>Resolution</h5><p>Ownership validation added on export; access logging introduced to detect bulk-pull patterns going forward.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-high">High</span>
+          <span class="case-title">Unauthenticated access to a paid AI inference endpoint</span>
+          <span class="case-industry">AI / SaaS Platform</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>An internal-facing model inference route was reachable without a valid session token, exposing metered, paid AI functionality and portions of the underlying prompt template.</p></div>
+          <div><h5>Impact</h5><p>Unbilled usage at scale, plus partial disclosure of proprietary prompt engineering that underpinned the product's core feature.</p></div>
+          <div><h5>Resolution</h5><p>Authentication enforced at the gateway layer; prompt templates moved server-side only.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-high">High</span>
+          <span class="case-title">Cross-tenant CAD file exposure in design-collaboration module</span>
+          <span class="case-industry">Engineering / PLM Software</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>A file-sharing module for CAD projects scoped access by a client-supplied project ID rather than validating the requesting user's tenant, allowing one company's proprietary design files to be fetched using another's ID.</p></div>
+          <div><h5>Impact</h5><p>Exposure of confidential product designs across unrelated client organizations sharing the same platform — an IP-theft-grade finding.</p></div>
+          <div><h5>Resolution</h5><p>Tenant-bound authorization enforced on every file fetch; retested with multi-tenant test accounts to confirm isolation.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-crit">Critical</span>
+          <span class="case-title">Customs-sensitive cargo data exposed via unauthenticated manifest API</span>
+          <span class="case-industry">Port & Freight Logistics</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>A container-tracking API used by a major European port operator returned full cargo manifests, including customs declarations and consignee details, to requests with no authentication check at all.</p></div>
+          <div><h5>Impact</h5><p>Sensitive trade and customs data for cross-border shipments was fully enumerable — a critical concern given the operational and regulatory sensitivity of port logistics.</p></div>
+          <div><h5>Resolution</h5><p>Endpoint moved behind authenticated, scoped API access; anomaly alerting added for bulk manifest queries.</p></div>
+        </div></div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <span class="sev sev-med">Medium</span>
+          <span class="case-title">Subscription entitlement bypass via client-trusted DRM token</span>
+          <span class="case-industry">Media / Streaming</span>
+          <span class="case-chevron">▸</span>
+        </div>
+        <div class="case-body"><div class="case-body-inner">
+          <div><h5>Finding</h5><p>A streaming platform's player trusted an entitlement flag embedded in a client-side token to decide whether premium content could play, rather than re-validating the subscription server-side per request.</p></div>
+          <div><h5>Impact</h5><p>Modifying the token allowed premium/paid content playback without an active subscription.</p></div>
+          <div><h5>Resolution</h5><p>Entitlement checks moved server-side on every playback request; token signing hardened to prevent tampering.</p></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head fade-in">
+      <div class="section-eyebrow">Skill stack</div>
+      <h2 class="section-title">The edge is knowing both sides of the request</h2>
+      <p class="section-sub">Most pentesters read code to find bugs. I've shipped code for a living — so I know which shortcuts a deadline actually tempts a developer into taking.</p>
+    </div>
+    <div class="skills-grid fade-in">
+      <div class="skills-col offense">
+        <h3>Offense</h3>
+        <div class="skills-sub">// how I break it</div>
+        <div class="chip-row">
+          <span class="chip">Burp Suite Pro</span>
+          <span class="chip">OWASP Top 10</span>
+          <span class="chip">API Security (OWASP API Top 10)</span>
+          <span class="chip">IDOR / BOLA Hunting</span>
+          <span class="chip">Auth & Session Testing</span>
+          <span class="chip">Postman</span>
+          <span class="chip">SQLMap</span>
+          <span class="chip">Nmap</span>
+          <span class="chip">Business Logic Abuse</span>
+          <span class="chip">CEH Methodology</span>
+          <span class="chip">CI/CD Pipeline Security (CICD-Goat)</span>
+        </div>
+      </div>
+      <div class="skills-col">
+        <h3>Foundation</h3>
+        <div class="skills-sub">// how I know it was built</div>
+        <div class="chip-row">
+          <span class="chip">JavaScript / Node.js</span>
+          <span class="chip">REST & API Design</span>
+          <span class="chip">SQL & Relational DBs</span>
+          <span class="chip">Git</span>
+          <span class="chip">Linux</span>
+          <span class="chip">Full-Stack Web Dev</span>
+          <span class="chip">CI/CD Basics</span>
+          <span class="chip">Cloud Fundamentals</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head fade-in">
+      <div class="section-eyebrow">Experience</div>
+      <h2 class="section-title">15 years in IT, the last 5.6 spent breaking it professionally</h2>
+    </div>
+    <div class="timeline fade-in">
+      <div class="tl-item">
+        <div class="tl-year">Current</div>
+        <div class="tl-role">Web & API Penetration Tester / Security Consultant</div>
+        <div class="tl-desc">Leading manual pentests and domain-aware security assessments across banking, ecommerce, retail, income tax, education, and freight logistics platforms, from scoping through retest.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">5.6 yrs in AppSec</div>
+        <div class="tl-role">Transition into Offensive Security</div>
+        <div class="tl-desc">Moved from building applications to testing them — earned CEH and shifted focus to web application and API penetration testing full-time.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">15 yrs in IT</div>
+        <div class="tl-role">Full-Stack Development Background</div>
+        <div class="tl-desc">Built and maintained production web applications, which now directly informs how findings are triaged, explained to engineering teams, and remediated fast.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box fade-in">
+      <h2>Have an app or API that needs breaking?</h2>
+      <p>Open to penetration testing engagements, security consulting, and domain-specific assessments across banking, ecommerce, retail, income tax, education, and logistics platforms.</p>
+      <div class="contact-links">
+        <a class="btn btn-primary" href="https://www.linkedin.com/in/dheerajkumarjayaswal/" target="_blank" rel="noopener">LinkedIn →</a>
+        <a class="btn btn-ghost" href="https://github.com/dheeraj-jayaswal" target="_blank" rel="noopener">GitHub →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 Dheeraj Kumar Jayaswal — Findings anonymized to protect client confidentiality under NDA.</p>
+  </div>
+</footer>
+
+<script>
+  // ---------- Boot sequence ----------
+  (function(){
+    const boot = document.getElementById('boot');
+    const lines = document.querySelectorAll('#boot-inner .line');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduced){ boot.classList.add('done'); document.body.style.overflow=''; }
+    else{
+      document.body.style.overflow = 'hidden';
+      lines.forEach((l,i)=>{
+        l.innerHTML = l.dataset.text;
+        setTimeout(()=>l.classList.add('show'), i*260);
+      });
+      setTimeout(()=>{
+        boot.classList.add('done');
+        document.body.style.overflow = '';
+      }, lines.length*260 + 500);
+    }
+  })();
+
+  // ---------- Matrix rain ----------
+  (function(){
+    const canvas = document.getElementById('matrix');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const hero = document.querySelector('.hero');
+    let cols, drops, w, h;
+    const chars = '01{}<>/;:=+*#$_APIx';
+    function size(){
+      w = canvas.width = hero.offsetWidth;
+      h = canvas.height = hero.offsetHeight;
+      cols = Math.floor(w/16);
+      drops = Array(cols).fill(0).map(()=>Math.random()*-50);
+    }
+    size();
+    window.addEventListener('resize', size);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function draw(){
+      ctx.fillStyle = 'rgba(11,13,16,0.14)';
+      ctx.fillRect(0,0,w,h);
+      ctx.font = '13px JetBrains Mono, monospace';
+      for(let i=0;i<cols;i++){
+        const ch = chars[Math.floor(Math.random()*chars.length)];
+        const isGold = Math.random()<0.06;
+        ctx.fillStyle = isGold ? '#E8A94C' : 'rgba(76,175,125,0.65)';
+        ctx.fillText(ch, i*16, drops[i]*16);
+        if(drops[i]*16 > h && Math.random()>0.975) drops[i] = 0;
+        drops[i]++;
+      }
+      if(!reduced) requestAnimationFrame(draw);
+    }
+    if(!reduced) requestAnimationFrame(draw);
+  })();
+
+  // ---------- Cursor spotlight ----------
+  (function(){
+    const hero = document.querySelector('.hero');
+    const spot = document.getElementById('spotlight');
+    if(!hero || !spot) return;
+    hero.addEventListener('mousemove', (e)=>{
+      const r = hero.getBoundingClientRect();
+      spot.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      spot.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  })();
+
+  // ---------- Glitch pulse on hero word ----------
+  (function(){
+    const el = document.getElementById('glitchWord');
+    if(!el) return;
+    function pulse(){
+      el.classList.add('glitching');
+      setTimeout(()=>el.classList.remove('glitching'), 260);
+      setTimeout(pulse, 3800 + Math.random()*2600);
+    }
+    setTimeout(pulse, 1800);
+  })();
+
+  // ---------- Count-up stats ----------
+  (function(){
+    const counters = document.querySelectorAll('.count');
+    if(!counters.length) return;
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseFloat(el.dataset.target);
+        const decimals = parseInt(el.dataset.decimal || '0');
+        const dur = 1100;
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min(1, (now-start)/dur);
+          const val = target * (1 - Math.pow(1-p, 3));
+          el.textContent = val.toFixed(decimals);
+          if(p<1) requestAnimationFrame(tick); else el.textContent = target.toFixed(decimals);
+        }
+        requestAnimationFrame(tick);
+        io.unobserve(el);
+      });
+    }, {threshold:0.5});
+    counters.forEach(c=>io.observe(c));
+  })();
+
+  // Case study accordion
+  document.querySelectorAll('.case-head').forEach(head=>{
+    head.addEventListener('click', ()=>{
+      const card = head.parentElement;
+      const wasOpen = card.classList.contains('open');
+      document.querySelectorAll('.case').forEach(c=>c.classList.remove('open'));
+      if(!wasOpen) card.classList.add('open');
+    });
+    head.setAttribute('tabindex','0');
+    head.setAttribute('role','button');
+    head.addEventListener('keydown', e=>{
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); head.click(); }
+    });
+  });
+
+  // Fade-in on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+
+  // Repeater hero sequence: request already shows the tampered role via CSS.
+  // Animate the response flipping from 403 -> 200 after a short delay, looping subtly.
+  const statusLine = document.getElementById('statusLine');
+  const respBody = document.getElementById('respBody');
+  const foot = document.getElementById('repeaterFoot');
+  const cursor = document.getElementById('cursorBlink');
+
+  function playSequence(){
+    statusLine.textContent = 'HTTP/1.1 403 Forbidden';
+    statusLine.className = 'status-403';
+    respBody.textContent = '';
+    cursor.style.display='inline-block';
+    setTimeout(()=>{
+      statusLine.textContent = 'HTTP/1.1 200 OK';
+      statusLine.className = 'status-200';
+      respBody.textContent = '{ "userId": 8841, "role": "admin" }';
+      foot.textContent = 'Server accepted the client-supplied role — privilege escalation confirmed. Reported as Critical.';
+      cursor.style.display='none';
+    }, 2200);
+  }
+  playSequence();
+  setInterval(playSequence, 6000);
+</script>
+
+</body>
+</html>
